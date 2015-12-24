@@ -25,7 +25,25 @@ var Buttons = React.createClass({
   // that the components aren't directly accessing the store?
   handleUpClick() {
     if(this.props.upState === CONSTANTS.FROZEN_FALSE && !store.getState().is_fetching) {
+      //store.dispatch(actions.clickEventUp());
+      //var secondSubstitution = { targetIndex: 0, relationIndex: 1 };
+      //store.dispatch(actions.getSithInfo({
+      //  inheritanceDirectionality: CONSTANTS.MASTER,
+      //  targetIndex: secondSubstitution.targetIndex,
+      //  relationIndex: secondSubstitution.relationIndex,
+      //  relationId: store.getState().siths[secondSubstitution.relationIndex].master
+      //}));
+
       store.dispatch(actions.clickEventUp());
+
+      var secondSubstitution = { targetIndex: 1, relationIndex: 2 };
+      store.dispatch(actions.getSithInfo({
+        inheritanceDirectionality: CONSTANTS.MASTER,
+        targetIndex: secondSubstitution.targetIndex,
+        relationIndex: secondSubstitution.relationIndex,
+        relationId: store.getState().siths[secondSubstitution.relationIndex].master
+      }));
+
       var secondSubstitution = { targetIndex: 0, relationIndex: 1 };
       store.dispatch(actions.getSithInfo({
         inheritanceDirectionality: CONSTANTS.MASTER,
@@ -33,12 +51,32 @@ var Buttons = React.createClass({
         relationIndex: secondSubstitution.relationIndex,
         relationId: store.getState().siths[secondSubstitution.relationIndex].master
       }));
+
     }
   },
 
   handleDownClick() {
     if(this.props.downState === CONSTANTS.FROZEN_FALSE && !store.getState().is_fetching) {
+      //store.dispatch(actions.clickEventDown());
+      //var secondSubstitution = { targetIndex: 4, relationIndex: 3 };
+      //store.dispatch(actions.getSithInfo({
+      //  inheritanceDirectionality: CONSTANTS.APPRENTICE,
+      //  targetIndex: secondSubstitution.targetIndex,
+      //  relationIndex: secondSubstitution.relationIndex,
+      //  relationId: store.getState().siths[secondSubstitution.relationIndex].apprentice
+      //}));
+
       store.dispatch(actions.clickEventDown());
+      //store.dispatch(actions.clickEventDown());
+      //
+      //var secondSubstitution = { targetIndex: 3, relationIndex: 2 };
+      //store.dispatch(actions.getSithInfo({
+      //  inheritanceDirectionality: CONSTANTS.APPRENTICE,
+      //  targetIndex: secondSubstitution.targetIndex,
+      //  relationIndex: secondSubstitution.relationIndex,
+      //  relationId: store.getState().siths[secondSubstitution.relationIndex].apprentice
+      //}));
+
       var secondSubstitution = { targetIndex: 4, relationIndex: 3 };
       store.dispatch(actions.getSithInfo({
         inheritanceDirectionality: CONSTANTS.APPRENTICE,
@@ -46,6 +84,7 @@ var Buttons = React.createClass({
         relationIndex: secondSubstitution.relationIndex,
         relationId: store.getState().siths[secondSubstitution.relationIndex].apprentice
       }));
+
     }
   }
 

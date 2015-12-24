@@ -19,3 +19,7 @@ export const CLICK_EVENT_UP = 'CLICK_EVENT_UP';
 export const UPDATE_WORLD_EVENT = 'UPDATE_WORLD_EVENT';
 export const SAVE_CURRENT_STATE = 'SAVE_CURRENT_STATE';
 export const FETCHING_STATUS_UPDATE = 'FETCHING_STATUS_UPDATE';
+
+export const keyForIsFetching = 'is_fetching';
+export const keyForButtonDown = 'button_down';
+export const keyForButtonUp = 'button_up';
