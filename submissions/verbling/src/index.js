@@ -16,7 +16,8 @@ function socketMessageHandler(message) {
 }
 
 socket.onmessage = function(message) {
-  if(!store.getState().is_fetching) {
+  var notInterrupting = !store.getState().is_fetching;
+  if(notInterrupting) {
     socketMessageHandler(message);
   }
 };

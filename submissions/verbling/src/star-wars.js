@@ -17,7 +17,7 @@ export default function reducer(state = initialState, action = CONSTANTS.NONE) {
       var copy = _.extend({}, state);
       copy.world.id = action.id;
       copy.world.name = action.name;
-      return Helpers.refreshState(state, { canMutate: true });
+      return Helpers.refreshState(copy, { canMutate: true });
 
     case Constants.SAVE_CURRENT_STATE:
       var copy = Helpers.refreshState(state, { canMutate: false });
@@ -37,11 +37,12 @@ export default function reducer(state = initialState, action = CONSTANTS.NONE) {
         Constants.keyForButtonUp, Constants.FROZEN_TRUE);
 
     case Constants.CLICK_EVENT_UP:
-      return Helpers.handleUpClickEvent(state);
+      //return Helpers.handleUpClickEvent(state);
+      return Helpers.handleUpClickEventTwoSpaces(state);
 
     case Constants.CLICK_EVENT_DOWN:
-      return Helpers.handleDownClickEvent(state);
-
+      //return Helpers.handleDownClickEvent(state);
+      return Helpers.handleDownClickEventTwoSpaces(state);
     case Constants.NONE:
       return state;
 

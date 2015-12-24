@@ -2,72 +2,96 @@
  * Created by airrex on 12/23/15.
  */
 
-import * as CONSTANTS from './constants';
+import * as Constants from './constants';
 import fetch from 'isomorphic-fetch'
 
 var actions = {
 
-  updateWorldEvent (worldMessage){
+  updateWorldEvent (message){
     return {
-      type: CONSTANTS.UPDATE_WORLD_EVENT,
-      name: worldMessage.name,
-      id: worldMessage.id
+      type: Constants.UPDATE_WORLD_EVENT,
+      name: message.name,
+      id: message.id
     };
   },
 
   clickEventUp () {
-    return { type: CONSTANTS.CLICK_EVENT_UP };
+    return { type: Constants.CLICK_EVENT_UP };
   },
 
   clickEventDown () {
-    return { type: CONSTANTS.CLICK_EVENT_DOWN };
+    return { type: Constants.CLICK_EVENT_DOWN };
   },
 
   isFetching (bool) {
-    return { type: CONSTANTS.FETCHING_STATUS_UPDATE, isFetching: bool }
+    return { type: Constants.FETCHING_STATUS_UPDATE, isFetching: bool }
   },
 
   toggleButtonUp () {
-    return { type: CONSTANTS.TOGGLE_BUTTON_UP };
+    return { type: Constants.TOGGLE_BUTTON_UP };
   },
 
   toggleButtonDown () {
-    return { type: CONSTANTS.TOGGLE_BUTTON_DOWN };
+    return { type: Constants.TOGGLE_BUTTON_DOWN };
   },
 
   receiveSithInformation (paramsObj) {
     return {
-      type: CONSTANTS.SAVE_CURRENT_STATE,
+      type: Constants.SAVE_CURRENT_STATE,
       paramsObj
     };
   },
 
-  getSithInfo (paramsObj) {
+  getSithInfo (paramsObj, stop) {
     var inheritanceDirectionality = paramsObj.inheritanceDirectionality, relationId = paramsObj.relationId;
     return dispatch => {
 
-      if(paramsObj.relationId === null) {
-        // If Jedi is first-most or last in list;
-        if(inheritanceDirectionality === CONSTANTS.MASTER) dispatch(actions.toggleButtonUp());
-        if(inheritanceDirectionality === CONSTANTS.APPRENTICE) dispatch(actions.toggleButtonDown());
-        return { type: CONSTANTS.NONE };
+      if(relationId === null) {
+        if(inheritanceDirectionality === Constants.MASTER) dispatch(actions.toggleButtonUp());
+        if(inheritanceDirectionality === Constants.APPRENTICE) dispatch(actions.toggleButtonDown());
+        return { type: Constants.NONE };
       }
 
       dispatch(actions.isFetching(true));
 
-      return fetch(`${CONSTANTS.WEB_ADDRESS}${paramsObj.relationId}`)
+      return fetch(`${Constants.WEB_ADDRESS}${paramsObj.relationId}`)
         .then(response => response.json())
         .then(function(targetSith) {
-          paramsObj.sith = targetSith;
-          paramsObj.targetId = targetSith.id;
+          var outputObj = {};
+
+          outputObj.sith = targetSith;
+          outputObj.targetId = targetSith.id;
+          outputObj.targetIndex = paramsObj.targetIndex;
           /* master/ apprentice ID properties of response obj are nested a layer deeper than on siths from dark-jedis list */
-          if(inheritanceDirectionality === CONSTANTS.MASTER) {
-            paramsObj.sith.master = targetSith.master.id;
-          } else if(inheritanceDirectionality === CONSTANTS.APPRENTICE) {
-            paramsObj.sith.apprentice = targetSith.apprentice.id;
+          if(inheritanceDirectionality === Constants.MASTER) {
+            outputObj.sith.master = targetSith.master.id;
+          } else if(inheritanceDirectionality === Constants.APPRENTICE) {
+            outputObj.sith.apprentice = targetSith.apprentice.id;
           }
-          dispatch(actions.receiveSithInformation(paramsObj));
+          dispatch(actions.receiveSithInformation(outputObj));
           dispatch(actions.isFetching(false));
+
+          if(!stop) {
+            var secondSubstitution = {};
+            if(inheritanceDirectionality === Constants.MASTER) {
+              secondSubstitution.targetIndex = paramsObj.targetIndex - 1;
+              secondSubstitution.relationIndex = paramsObj.relationIndex - 1
+            } else if(inheritanceDirectionality === Constants.APPRENTICE) {
+              secondSubstitution.targetIndex = paramsObj.targetIndex + 1;
+              secondSubstitution.relationIndex = paramsObj.relationIndex + 1
+            }
+            var dispatchParams = {};
+            dispatchParams.inheritanceDirectionality = paramsObj.inheritanceDirectionality;
+            dispatchParams.targetIndex = secondSubstitution.targetIndex;
+            dispatchParams.relationIndex = secondSubstitution.relationIndex;
+            if(inheritanceDirectionality === Constants.MASTER) {
+              dispatchParams.relationId = outputObj.sith.master;
+            } else if(inheritanceDirectionality === Constants.APPRENTICE) {
+              dispatchParams.relationId = outputObj.sith.apprentice;
+            }
+            dispatch(actions.getSithInfo(dispatchParams, true));
+          }
+
         });
     }
   }
